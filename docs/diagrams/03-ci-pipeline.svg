@@ -1,65 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="CI pipeline from push to signed bundle on Play internal testing">
-  <style>
-    .box { fill: #ffffff; stroke: #b9bfbe; stroke-width: 1.5; rx: 9 }
-    .gate { fill: #f5e9d3; stroke: #8a5a12; stroke-width: 1.5; rx: 9 }
-    .stop { fill: #f5e0da; stroke: #93321f; stroke-width: 1.5; rx: 20 }
-    .good { fill: #dbeee4; stroke: #1f6b45; stroke-width: 1.5; rx: 9 }
-    .ship { fill: #dcecef; stroke: #0b6f80; stroke-width: 1.8; rx: 9 }
-    .t { font: 600 12.5px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #191c1e; text-anchor: middle }
-    .s { font: 400 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #4a5155; text-anchor: middle }
-    .edge { stroke: #767f84; stroke-width: 1.6; fill: none; marker-end: url(#a) }
-    .edge-fail { stroke: #93321f; stroke-width: 1.4; fill: none; stroke-dasharray: 4 3; marker-end: url(#af) }
-    @media (prefers-color-scheme: dark) {
-      .box { fill: #1b2023; stroke: #3e474a }
-      .gate { fill: #3a2d13; stroke: #e0b567 }
-      .stop { fill: #3b1d16; stroke: #e0917d }
-      .good { fill: #163326; stroke: #7fc79f }
-      .ship { fill: #17383e; stroke: #4fc3d6 }
-      .t { fill: #e8ecec } .s { fill: #a8b2b4 }
-      .edge { stroke: #7c8688 } .edge-fail { stroke: #e0917d }
-    }
-  </style>
+<svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pipeline: a push to a release branch installs dependencies, runs a typecheck and lint gate that can stop the build, prebuilds the native project, signs and bundles for phone ABIs only, uploads to Play internal testing, then shreds the signing key.">
   <defs>
-    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#767f84"/></marker>
-    <marker id="af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#93321f"/></marker>
+    <marker id="ca" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#94a3b8"/></marker>
+    <marker id="cf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/></marker>
   </defs>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="12.5">
+    <rect x="16" y="88" width="122" height="52" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="77" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">push</text>
+    <text x="77" y="128" text-anchor="middle" font-size="11" fill="#475569">release/**</text>
 
-  <rect class="box" x="16" y="96" width="120" height="52"/>
-  <text class="t" x="76" y="118">push</text>
-  <text class="s" x="76" y="136">release/**</text>
+    <rect x="166" y="88" width="122" height="52" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="227" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">install</text>
+    <text x="227" y="128" text-anchor="middle" font-size="11" fill="#475569">npm ci</text>
 
-  <rect class="box" x="164" y="96" width="120" height="52"/>
-  <text class="t" x="224" y="118">install</text>
-  <text class="s" x="224" y="136">npm ci</text>
+    <rect x="316" y="88" width="122" height="52" rx="9" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+    <text x="377" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">quality gate</text>
+    <text x="377" y="128" text-anchor="middle" font-size="11" fill="#475569">tsc · eslint</text>
 
-  <rect class="gate" x="312" y="96" width="120" height="52"/>
-  <text class="t" x="372" y="118">quality gate</text>
-  <text class="s" x="372" y="136">tsc · eslint</text>
+    <rect x="316" y="196" width="122" height="44" rx="20" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="377" y="223" text-anchor="middle" font-weight="700" fill="#0f172a">build stops</text>
 
-  <rect class="stop" x="312" y="208" width="120" height="44"/>
-  <text class="t" x="372" y="235">build stops</text>
+    <rect x="466" y="88" width="126" height="52" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="529" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">prebuild</text>
+    <text x="529" y="128" text-anchor="middle" font-size="11" fill="#475569">--clean</text>
 
-  <rect class="box" x="460" y="96" width="126" height="52"/>
-  <text class="t" x="523" y="118">prebuild</text>
-  <text class="s" x="523" y="136">--clean</text>
+    <rect x="620" y="88" width="126" height="52" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="683" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">sign + bundle</text>
+    <text x="683" y="128" text-anchor="middle" font-size="11" fill="#475569">arm64 only</text>
 
-  <rect class="box" x="614" y="96" width="126" height="52"/>
-  <text class="t" x="677" y="118">sign + bundle</text>
-  <text class="s" x="677" y="136">arm64 only</text>
+    <rect x="774" y="88" width="112" height="52" rx="9" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text x="830" y="110" text-anchor="middle" font-weight="700" fill="#0f172a">Play</text>
+    <text x="830" y="128" text-anchor="middle" font-size="11" fill="#475569">internal</text>
 
-  <rect class="ship" x="768" y="96" width="118" height="52"/>
-  <text class="t" x="827" y="118">Play</text>
-  <text class="s" x="827" y="136">internal</text>
+    <rect x="620" y="192" width="126" height="50" rx="9" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text x="683" y="214" text-anchor="middle" font-weight="700" fill="#0f172a">shred key</text>
+    <text x="683" y="232" text-anchor="middle" font-size="11" fill="#475569">always()</text>
 
-  <rect class="good" x="614" y="200" width="126" height="52"/>
-  <text class="t" x="677" y="222">shred key</text>
-  <text class="s" x="677" y="240">always()</text>
-
-  <path class="edge" d="M136 122 L 160 122"/>
-  <path class="edge" d="M284 122 L 308 122"/>
-  <path class="edge" d="M432 122 L 456 122"/>
-  <path class="edge" d="M586 122 L 610 122"/>
-  <path class="edge" d="M740 122 L 764 122"/>
-  <path class="edge-fail" d="M372 150 L 372 204"/>
-  <path class="edge" d="M677 150 L 677 196"/>
+    <line x1="138" y1="114" x2="160" y2="114" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="288" y1="114" x2="310" y2="114" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="438" y1="114" x2="460" y2="114" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="592" y1="114" x2="614" y2="114" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="746" y1="114" x2="768" y2="114" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="683" y1="140" x2="683" y2="186" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ca)"/>
+    <line x1="377" y1="142" x2="377" y2="190" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#cf)"/>
+  </g>
 </svg>

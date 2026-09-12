@@ -64,6 +64,19 @@ through, and report back. The flows we run are written down in
 | [`automation/`](automation/) | The simulator flows worth automating |
 | [`.github/workflows/`](.github/workflows/) | Signed AAB → Play internal testing |
 
+## Status
+
+Published as a reference, not as a tested starter kit. The workflow is adapted
+from one running in production elsewhere; the Expo app here is new and has not
+yet been installed, built or shipped through the pipeline from a clean checkout.
+Treat version pins in `package.json` as a starting point rather than a
+guarantee, and open an issue if a step does not hold — that is the fastest way
+for this to become something you can clone and run.
+
+Pointing a Claude client at LM Studio's Anthropic-compatible endpoint is
+documented by LM Studio and follows from their API, but we have not run it
+ourselves. Untested until you try it.
+
 ## Honest limits
 
 The simulator connector drives **simulators**, not physical devices. There is no
