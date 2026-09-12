@@ -1,0 +1,117 @@
+# Push to release/** (or a manual run) → the GitHub runner builds the signed AAB
+# itself (expo prebuild + Gradle) and uploads it to Google Play "Internal
+# testing". No cloud build service: the upload keystore and the Play service
+# account exist only inside the job, and the keystore is shredded at the end
+# whether the build passed or failed.
+name: Android · internal testing
+
+on:
+  push:
+    branches: ['release/**']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version name (e.g. 1.0.3). Defaults to app.json.
+        required: false
+
+concurrency:
+  # Two builds on one branch would race for the same version code.
+  group: android-internal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: mobile-app
+    env:
+      # Strictly increasing per upload; run_number never repeats for a repo.
+      # Offset it past anything you uploaded by hand — Play refuses a code it
+      # has already seen, and the error does not explain that.
+      ANDROID_VERSION_CODE: ${{ github.run_number }}
+      APP_VERSION: ${{ github.event.inputs.version }}
+      EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+      EXPO_PUBLIC_STOREFRONT_HOST: ${{ vars.EXPO_PUBLIC_STOREFRONT_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile-app/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        # Not `npm install` — the lockfile is the contract.
+        run: npm ci --legacy-peer-deps
+
+      - name: Typecheck and lint
+        # Cheap, and it runs before the slow part.
+        run: npx tsc --noEmit && npx eslint .
+
+      - name: Generate native project
+        # --clean, so a config change cannot leave stale native artefacts behind.
+        run: npx expo prebuild --platform android --no-install --clean
+
+      - name: Restore upload keystore
+        run: echo "${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}" | base64 -d > android/app/upload.keystore
+
+      - name: Wire release signing
+        run: node scripts/android-release-signing.mjs
+        env:
+          ANDROID_KEYSTORE_PATH: upload.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Build only phone ABIs
+        # Play serves per-ABI; x86/x86_64 exist for emulators only. Dropping them
+        # roughly halves the native (CMake) compile time.
+        run: printf '\nreactNativeArchitectures=arm64-v8a,armeabi-v7a\n' >> android/gradle.properties
+
+      - name: Build release bundle
+        working-directory: mobile-app/android
+        env:
+          ANDROID_KEYSTORE_PATH: upload.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        # --no-daemon: the runner is ephemeral, a daemon buys nothing and can hang.
+        run: ./gradlew bundleRelease --no-daemon
+
+      - name: Upload to Google Play (Internal testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: dev.webdirect.prompttoplaystore
+          releaseFiles: mobile-app/android/app/build/outputs/bundle/release/app-release.aab
+          # Without the mapping, the first crash report is unreadable noise.
+          mappingFile: mobile-app/android/app/build/outputs/mapping/release/mapping.txt
+          tracks: internal
+          status: completed
+          inAppUpdatePriority: 2
+          whatsNewDirectory: .github/whatsnew
+
+      - name: Keep the bundle as a workflow artifact
+        # For when Play rejects and you need the exact binary that was sent.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-internal-${{ github.run_number }}.aab
+          path: mobile-app/android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 14
+
+      - name: Scrub secrets
+        # always(): the key is removed even when the build fails.
+        if: always()
+        run: rm -f android/app/upload.keystore

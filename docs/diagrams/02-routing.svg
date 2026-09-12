@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" width="760" height="420" role="img" aria-label="Decision tree for routing a task to the cloud model or the local model">
+  <style>
+    .box { fill: #ffffff; stroke: #b9bfbe; stroke-width: 1.5; rx: 10 }
+    .cloud { fill: #dcecef; stroke: #0b6f80; stroke-width: 1.8; rx: 10 }
+    .local { fill: #dbeee4; stroke: #1f6b45; stroke-width: 1.8; rx: 10 }
+    .t { font: 600 14px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #191c1e; text-anchor: middle }
+    .s { font: 400 12px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #4a5155; text-anchor: middle }
+    .edge { stroke: #767f84; stroke-width: 1.6; fill: none; marker-end: url(#a) }
+    .yes { font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #1f6b45 }
+    .no { font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #93321f }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #1b2023; stroke: #3e474a }
+      .cloud { fill: #17383e; stroke: #4fc3d6 }
+      .local { fill: #163326; stroke: #7fc79f }
+      .t { fill: #e8ecec } .s { fill: #a8b2b4 }
+      .edge { stroke: #7c8688 }
+      .yes { fill: #7fc79f } .no { fill: #e0917d }
+    }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#767f84"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="300" y="16" width="160" height="44"/>
+  <text class="t" x="380" y="43">Task</text>
+
+  <rect class="box" x="250" y="96" width="260" height="56"/>
+  <text class="t" x="380" y="119">Needs the whole repo</text>
+  <text class="s" x="380" y="138">in context?</text>
+
+  <rect class="box" x="250" y="196" width="260" height="56"/>
+  <text class="t" x="380" y="219">Sensitive data?</text>
+  <text class="s" x="380" y="238">logs · screenshots · records</text>
+
+  <rect class="box" x="250" y="296" width="260" height="56"/>
+  <text class="t" x="380" y="319">High volume,</text>
+  <text class="s" x="380" y="338">tolerant to small errors?</text>
+
+  <rect class="cloud" x="580" y="108" width="160" height="52"/>
+  <text class="t" x="660" y="132">Cloud model</text>
+  <text class="s" x="660" y="150">judgement</text>
+
+  <rect class="local" x="30" y="240" width="170" height="52"/>
+  <text class="t" x="115" y="264">Local 27B</text>
+  <text class="s" x="115" y="282">volume</text>
+
+  <rect class="cloud" x="580" y="326" width="160" height="44"/>
+  <text class="t" x="660" y="353">Cloud model</text>
+
+  <path class="edge" d="M380 62 L 380 92"/>
+  <path class="edge" d="M510 124 L 576 130"/>
+  <text class="yes" x="524" y="115">yes</text>
+  <path class="edge" d="M380 154 L 380 192"/>
+  <text class="no" x="392" y="177">no</text>
+  <path class="edge" d="M248 226 L 204 258"/>
+  <text class="yes" x="206" y="222">yes</text>
+  <path class="edge" d="M380 254 L 380 292"/>
+  <text class="no" x="392" y="277">no</text>
+  <path class="edge" d="M248 324 L 204 290"/>
+  <text class="yes" x="206" y="318">yes</text>
+  <path class="edge" d="M510 330 L 576 342"/>
+  <text class="no" x="530" y="322">no</text>
+</svg>

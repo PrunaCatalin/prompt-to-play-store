@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Prompt to Play Store",
+    "slug": "prompt-to-play-store",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "demo",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "dev.webdirect.prompttoplaystore",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "dev.webdirect.prompttoplaystore",
+      "versionCode": 1
+    }
+  }
+}
